@@ -1,5 +1,6 @@
 // 製品データを取得
 let productsData = [];
+let currentSort = { column: null, ascending: true };
 
 // データ読み込み
 fetch('data/products.json')
@@ -17,14 +18,6 @@ function initPage() {
 
     if (filename === 'index.html' || filename === '') {
         initHomePage();
-    } else if (filename === 'products.html') {
-        initProductsPage();
-    } else if (filename === 'product-detail.html') {
-        initProductDetailPage();
-    } else if (filename === 'manufacturers.html') {
-        initManufacturersPage();
-    } else if (filename === 'manufacturer-detail.html') {
-        initManufacturerDetailPage();
     } else if (filename === 'submit.html') {
         initSubmitPage();
     }
@@ -32,23 +25,8 @@ function initPage() {
 
 // ホームページ
 function initHomePage() {
-    // コメント付き製品を表示
-    const featuredProducts = productsData.filter(p => p.hasComment).slice(0, 6);
-    displayProducts(featuredProducts, 'featured-products');
-
-    // 注目のメーカーを表示
-    const manufacturers = getManufacturers();
-    displayManufacturers(manufacturers.slice(0, 6), 'featured-manufacturers');
-}
-
-// 製品一覧ページ
-function initProductsPage() {
-    // フィルター設定
-    const categoryFilter = document.getElementById('category-filter');
-    const manufacturerFilter = document.getElementById('manufacturer-filter');
-    const commentFilter = document.getElementById('comment-filter');
-
     // メーカーフィルターのオプションを追加
+    const manufacturerFilter = document.getElementById('manufacturer-filter');
     const manufacturers = [...new Set(productsData.map(p => p.manufacturer))].sort();
     manufacturers.forEach(m => {
         const option = document.createElement('option');
@@ -57,22 +35,38 @@ function initProductsPage() {
         manufacturerFilter.appendChild(option);
     });
 
-    // URLパラメータからカテゴリーを取得
-    const urlParams = new URLSearchParams(window.location.search);
-    const categoryParam = urlParams.get('category');
-    if (categoryParam) {
-        categoryFilter.value = categoryParam;
-    }
+    // カテゴリーカードのクリックイベント
+    const categoryCards = document.querySelectorAll('.category-card');
+    categoryCards.forEach(card => {
+        card.addEventListener('click', () => {
+            const category = card.dataset.category;
+            document.getElementById('category-filter').value = category;
+            filterProducts();
+            // 製品一覧までスクロール
+            document.querySelector('.products-section').scrollIntoView({ behavior: 'smooth' });
+        });
+    });
 
     // フィルター変更時
-    categoryFilter.addEventListener('change', filterProducts);
-    manufacturerFilter.addEventListener('change', filterProducts);
-    commentFilter.addEventListener('change', filterProducts);
+    document.getElementById('category-filter').addEventListener('change', filterProducts);
+    document.getElementById('manufacturer-filter').addEventListener('change', filterProducts);
+    document.getElementById('comment-filter').addEventListener('change', filterProducts);
+    document.getElementById('reset-filter').addEventListener('click', resetFilters);
+
+    // ソート機能
+    const sortableHeaders = document.querySelectorAll('.sortable');
+    sortableHeaders.forEach(header => {
+        header.addEventListener('click', () => {
+            const column = header.dataset.column;
+            sortProducts(column);
+        });
+    });
 
     // 初期表示
-    filterProducts();
+    displayProducts(productsData);
 }
 
+// フィルター処理
 function filterProducts() {
     const categoryFilter = document.getElementById('category-filter').value;
     const manufacturerFilter = document.getElementById('manufacturer-filter').value;
@@ -92,93 +86,93 @@ function filterProducts() {
         filtered = filtered.filter(p => p.hasComment);
     }
 
-    displayProducts(filtered, 'products-list');
+    displayProducts(filtered);
 }
 
-// 製品詳細ページ
-function initProductDetailPage() {
-    const urlParams = new URLSearchParams(window.location.search);
-    const asin = urlParams.get('asin');
-
-    if (!asin) {
-        document.getElementById('product-detail-content').innerHTML = '<p>製品が見つかりません</p>';
-        return;
-    }
-
-    const product = productsData.find(p => p.asin === asin);
-    if (!product) {
-        document.getElementById('product-detail-content').innerHTML = '<p>製品が見つかりません</p>';
-        return;
-    }
-
-    // パンくずリスト
-    document.getElementById('product-name-breadcrumb').textContent = product.name;
-
-    // 製品詳細を表示
-    const html = `
-        <div class="product-image">
-            <img src="https://via.placeholder.com/400x400?text=${encodeURIComponent(product.manufacturer)}" 
-                 alt="${product.name}">
-        </div>
-        <div class="product-info">
-            <h1>${product.name}</h1>
-            <p class="manufacturer">
-                <a href="manufacturer-detail.html?name=${encodeURIComponent(product.manufacturer)}">
-                    ${product.manufacturer}
-                </a>
-            </p>
-            <p class="category">${product.category}</p>
-            <p class="price">${product.price}</p>
-            ${product.hasComment ? `
-                <div class="comment-box">
-                    <h3>✨ コメント</h3>
-                    <p>${product.comment}</p>
-                </div>
-            ` : ''}
-            <a href="${product.amazonUrl}" class="btn-primary btn-large" target="_blank" rel="noopener">
-                Amazonで見る
-            </a>
-        </div>
-    `;
-    document.getElementById('product-detail-content').innerHTML = html;
+// フィルターリセット
+function resetFilters() {
+    document.getElementById('category-filter').value = 'all';
+    document.getElementById('manufacturer-filter').value = 'all';
+    document.getElementById('comment-filter').checked = false;
+    currentSort = { column: null, ascending: true };
+    
+    // ソートアイコンをリセット
+    document.querySelectorAll('.sortable').forEach(header => {
+        header.classList.remove('sorted-asc', 'sorted-desc');
+    });
+    
+    displayProducts(productsData);
 }
 
-// メーカー一覧ページ
-function initManufacturersPage() {
-    const manufacturers = getManufacturers();
-    displayManufacturers(manufacturers, 'manufacturers-list');
-}
-
-// メーカー詳細ページ
-function initManufacturerDetailPage() {
-    const urlParams = new URLSearchParams(window.location.search);
-    const name = urlParams.get('name');
-
-    if (!name) {
-        document.getElementById('manufacturer-detail-content').innerHTML = '<p>メーカーが見つかりません</p>';
-        return;
+// ソート処理
+function sortProducts(column) {
+    const header = document.querySelector(`[data-column="${column}"]`);
+    
+    // 同じ列をクリックした場合は昇順/降順を切り替え
+    if (currentSort.column === column) {
+        currentSort.ascending = !currentSort.ascending;
+    } else {
+        currentSort.column = column;
+        currentSort.ascending = true;
     }
 
-    const products = productsData.filter(p => p.manufacturer === name);
+    // ソートアイコンを更新
+    document.querySelectorAll('.sortable').forEach(h => {
+        h.classList.remove('sorted-asc', 'sorted-desc');
+    });
+    header.classList.add(currentSort.ascending ? 'sorted-asc' : 'sorted-desc');
+
+    // 現在表示されている製品を取得
+    const tbody = document.getElementById('products-tbody');
+    const currentProducts = Array.from(tbody.querySelectorAll('tr')).map(row => {
+        const asin = row.dataset.asin;
+        return productsData.find(p => p.asin === asin);
+    });
+
+    // ソート実行
+    currentProducts.sort((a, b) => {
+        let aValue = a[column];
+        let bValue = b[column];
+
+        if (typeof aValue === 'string') {
+            aValue = aValue.toLowerCase();
+            bValue = bValue.toLowerCase();
+        }
+
+        if (aValue < bValue) return currentSort.ascending ? -1 : 1;
+        if (aValue > bValue) return currentSort.ascending ? 1 : -1;
+        return 0;
+    });
+
+    displayProducts(currentProducts);
+}
+
+// 製品を表示
+function displayProducts(products) {
+    const tbody = document.getElementById('products-tbody');
+    
     if (products.length === 0) {
-        document.getElementById('manufacturer-detail-content').innerHTML = '<p>メーカーが見つかりません</p>';
+        tbody.innerHTML = '<tr><td colspan="5" style="text-align: center;">製品が見つかりません</td></tr>';
         return;
     }
 
-    // パンくずリスト
-    document.getElementById('manufacturer-name-breadcrumb').textContent = name;
+    const html = products.map(product => `
+        <tr data-asin="${product.asin}">
+            <td>${product.name}</td>
+            <td>${product.manufacturer}</td>
+            <td>${product.category}</td>
+            <td class="comment-cell">
+                ${product.hasComment ? `<span class="comment-badge">✨</span>${product.comment}` : '-'}
+            </td>
+            <td>
+                <a href="${product.amazonUrl}" class="amazon-link" target="_blank" rel="noopener">
+                    Amazonで見る
+                </a>
+            </td>
+        </tr>
+    `).join('');
 
-    // メーカー情報を表示
-    const categories = [...new Set(products.map(p => p.category))];
-    const html = `
-        <h1>${name}</h1>
-        <p class="product-count">製品数: ${products.length}</p>
-        <p class="categories">カテゴリー: ${categories.join(', ')}</p>
-    `;
-    document.getElementById('manufacturer-detail-content').innerHTML = html;
-
-    // 製品一覧を表示
-    displayProducts(products, 'manufacturer-products-list');
+    tbody.innerHTML = html;
 }
 
 // 投稿フォームページ
@@ -190,7 +184,7 @@ function initSubmitPage() {
         const formMessage = document.getElementById('form-message');
         formMessage.style.display = 'block';
         formMessage.className = 'form-message success';
-        formMessage.textContent = 'ご投稿ありがとうございます！内容を確認の上、掲載を検討させていただきます。';
+        formMessage.textContent = 'ご投稿ありがとうございます！';
         
         form.reset();
         
@@ -198,69 +192,4 @@ function initSubmitPage() {
             formMessage.style.display = 'none';
         }, 5000);
     });
-}
-
-// 製品を表示
-function displayProducts(products, elementId) {
-    const container = document.getElementById(elementId);
-    if (!container) return;
-
-    if (products.length === 0) {
-        container.innerHTML = '<p>製品が見つかりません</p>';
-        return;
-    }
-
-    const html = products.map(product => `
-        <a href="product-detail.html?asin=${product.asin}" class="product-card">
-            <h3>${product.name}</h3>
-            <p class="manufacturer">${product.manufacturer}</p>
-            <p class="category">${product.category}</p>
-            ${product.hasComment ? `
-                <div class="comment">"${product.comment}"</div>
-                <span class="badge">✨ コメント付き</span>
-            ` : ''}
-            <p class="price">${product.price}</p>
-        </a>
-    `).join('');
-
-    container.innerHTML = html;
-}
-
-// メーカー一覧を取得
-function getManufacturers() {
-    const manufacturerMap = {};
-    
-    productsData.forEach(product => {
-        if (!manufacturerMap[product.manufacturer]) {
-            manufacturerMap[product.manufacturer] = {
-                name: product.manufacturer,
-                productCount: 0,
-                categories: new Set()
-            };
-        }
-        manufacturerMap[product.manufacturer].productCount++;
-        manufacturerMap[product.manufacturer].categories.add(product.category);
-    });
-
-    return Object.values(manufacturerMap).map(m => ({
-        name: m.name,
-        productCount: m.productCount,
-        categories: Array.from(m.categories)
-    }));
-}
-
-// メーカーを表示
-function displayManufacturers(manufacturers, elementId) {
-    const container = document.getElementById(elementId);
-    if (!container) return;
-
-    const html = manufacturers.map(m => `
-        <a href="manufacturer-detail.html?name=${encodeURIComponent(m.name)}" class="manufacturer-card">
-            <h3>${m.name}</h3>
-            <p class="product-count">製品数: ${m.productCount}</p>
-            <p class="categories">カテゴリー: ${m.categories.join(', ')}</p>
-        </a>
-    `).join('');
-
-    container.innerHTML = html;
 }
