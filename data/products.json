@@ -88,5 +88,95 @@
     "amazonUrl": "https://www.amazon.co.jp/dp/B08C5H7DR6",
     "comment": "至極の逸品!",
     "hasComment": true
+  },
+  {
+    "asin": "B0CJN2ZZVX",
+    "name": "LuLuLun ハイドラEXマスク",
+    "manufacturer": "LuLuLun",
+    "category": "美容・化粧品",
+    "amazonUrl": "https://www.amazon.co.jp/dp/B0CJN2ZZVX",
+    "comment": "日本のフェイスマスク界のトップを走るLuLuLun。その中でも評価の高いHYDRAシリーズのエクソソーム。コスパ最高の弾力と透明感用マスクは使用感もGOOD！編集部も継続愛用者続出です。",
+    "hasComment": true
+  },
+  {
+    "asin": "B0CW1CXMQC",
+    "name": "イハダ 化粧水 薬用ローション(とてもしっとり)",
+    "manufacturer": "資生堂ジャパン",
+    "category": "美容・化粧品",
+    "amazonUrl": "https://www.amazon.co.jp/dp/B0CW1CXMQC",
+    "comment": "敏感肌の強い味方。イハダはもう試されましたか？低刺激でお肌に優しく、潤い成分も配合の薬用化粧水です。",
+    "hasComment": true
+  },
+  {
+    "asin": "B0C8N52XDD",
+    "name": "メラノCC プレミアム美容液 Amazon限定版",
+    "manufacturer": "ロート製薬",
+    "category": "美容・化粧品",
+    "amazonUrl": "https://www.amazon.co.jp/dp/B0C8N52XDD",
+    "comment": "しみ、そばかすや毛穴対策として定番となったメラノCCシリーズ。プレミアム美容液はその中でももっとも高評価を得ていると言って過言ではないでしょう。一度お試しあれ🎵",
+    "hasComment": true
+  },
+  {
+    "asin": "B074QQC44S",
+    "name": "ケアセラ APフェイス&ボディ乳液",
+    "manufacturer": "ロート製薬",
+    "category": "美容・化粧品",
+    "amazonUrl": "https://www.amazon.co.jp/dp/B074QQC44S",
+    "comment": "８種類のセラミド配合で保湿力バツグンのケアセラ。顔から全身まで乾燥肌さんの強い味方💪",
+    "hasComment": true
+  },
+  {
+    "asin": "B08R1BFJG5",
+    "name": "ニベアUV ディーププロテクト&ケアジェル",
+    "manufacturer": "花王",
+    "category": "美容・化粧品",
+    "amazonUrl": "https://www.amazon.co.jp/dp/B08R1BFJG5",
+    "comment": "シミそばかすを防いで美容もできるUVケア商品の定番。軽いテクスチャーとしっかり効果がのぞめると高評価。せっけんで落とせる手軽さで日々のお肌ケアに。",
+    "hasComment": true
+  },
+  {
+    "asin": "B0C337Z858",
+    "name": "アイトー(Aito) aito製作所 「ナチュラルカラー」 プレート 皿 約14cm",
+    "manufacturer": "アイトー(Aito)",
+    "category": "食器・陶器",
+    "amazonUrl": "https://www.amazon.co.jp/dp/B0C337Z858",
+    "comment": "14センチのちょうどいいサイズに洋食和食と何でもOKのアイボリー系。電子レンジ食洗機も使えて、あると重宝する一枚です。",
+    "hasComment": true
+  },
+  {
+    "asin": "B00P09RPO0",
+    "name": "西海陶器(Saikaitoki) 波佐見焼 Common コモン ボウル グレー 直径約12cm",
+    "manufacturer": "西海陶器(Saikaitoki)",
+    "category": "食器・陶器",
+    "amazonUrl": "https://www.amazon.co.jp/dp/B00P09RPO0",
+    "comment": "手にすっとおさまる12センチボウル。スープやサラダなどにつかえる深型です。色味も綺麗で波佐見焼のよさがつまった一枚。",
+    "hasComment": true
+  },
+  {
+    "asin": "B0FNR57ZG1",
+    "name": "【Amazon.co.jp限定】 aito製作所 「ナチュラルカラー」 マグカップ 大きめ 約320ml",
+    "manufacturer": "アイトー(Aito)",
+    "category": "食器・陶器",
+    "amazonUrl": "https://www.amazon.co.jp/dp/B0FNR57ZG1",
+    "comment": "落ち着いた配色のマグ。320mlで少し大きめたっぷりサイズ。コーヒーやティータイム用にもいかが？",
+    "hasComment": true
+  },
+  {
+    "asin": "B0DXPRKTGY",
+    "name": "【公式】OGISO(おぎそ) アウトレット 11.5cm ごはん茶碗",
+    "manufacturer": "OGISO(おぎそ)",
+    "category": "食器・陶器",
+    "amazonUrl": "https://www.amazon.co.jp/dp/B0DXPRKTGY",
+    "comment": "お子様用に安心の日本製陶器を。丈夫でご飯もおかずもおまかせ。アウトレット価格での提供。これは買うしかない！",
+    "hasComment": true
+  },
+  {
+    "asin": "B0C23D4YCG",
+    "name": "「名探偵コナン」 コナン マグカップ ガラス マグ 約320ml",
+    "manufacturer": "金正陶器(Kaneshotouki)",
+    "category": "食器・陶器",
+    "amazonUrl": "https://www.amazon.co.jp/dp/B0C23D4YCG",
+    "comment": "コナンファンなら持っておきたい推しグッズ⭐️綺麗なガラスマグが日本製で登場。かざっておくだけではもったいない⁉️",
+    "hasComment": true
   }
 ]
